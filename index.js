@@ -1,8 +1,8 @@
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
+const morgan = require('morgan')
 
-app.use(bodyParser.json())
 
 let dummyPersons = [
   {
@@ -26,6 +26,9 @@ let dummyPersons = [
     id: 4
   }
 ]
+
+app.use(bodyParser.json())
+app.use(morgan('tiny'))
 
 app.get('/api/persons', (request, response) => {
   response.json(dummyPersons)
