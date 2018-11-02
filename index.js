@@ -59,19 +59,23 @@ app.post('/api/persons', (request, response) => {
     return response.status(400).json({ error: 'name or number missing' })
   }
 
-  if (dummyPersons.find(person => person.name === body.name)) {
-    return response.status(400).json({ error: 'name must be unique' })
-  }
+  // if (dummyPersons.find(person => person.name === body.name)) {
+  //   return response.status(400).json({ error: 'name must be unique' })
+  // }
 
-  const person = {
+  const person = new Person({
     name: body.name,
-    number: body.number,
-    id: generateId()
-  }
+    number: body.number
+  })
 
-  dummyPersons = dummyPersons.concat(person)
-
-  response.json(person)
+  person
+    .save()
+    .then(savedPerson => {
+      response.json(Person.format(savedPerson))
+    })
+    .catch(error => {
+      console.log(error)
+    })
 })
 
 const PORT = process.env.PORT || 3001
