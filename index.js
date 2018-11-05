@@ -82,22 +82,30 @@ app.post('/api/persons', (request, response) => {
     return response.status(400).json({ error: 'name or number missing' })
   }
 
-  // if (dummyPersons.find(person => person.name === body.name)) {
-  //   return response.status(400).json({ error: 'name must be unique' })
-  // }
+  Person
+    .find({ name: body.name })
+    .then(persons => {
+      return persons[0]
+    })
+    .then(foundPerson => {
+      if (foundPerson) {
+        return response.status(400).json({ error: 'name must be unique' })
+      }
+      
+      const person = new Person({
+        name: body.name,
+        number: body.number
+      })
 
-  const person = new Person({
-    name: body.name,
-    number: body.number
-  })
-
-  person
-    .save()
-    .then(savedPerson => {
-      response.json(Person.format(savedPerson))
+      person
+        .save()
+        .then(savedPerson => {
+          response.json(Person.format(savedPerson))
+        })
     })
     .catch(error => {
       console.log(error)
+      response.status(404).send({ error: 'error occurred' })
     })
 })
 
