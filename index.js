@@ -3,7 +3,6 @@ const app = express()
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const cors = require('cors')
-const mongoose = require('mongoose')
 const Person = require('./models/person')
 
 app.use(bodyParser.json())
@@ -47,6 +46,7 @@ app.delete('/api/persons/:id', (request, response) => {
       response.status(204).end()
     })
     .catch(error => {
+      console.log(error)
       response.status(400).send({ error: 'malformatted id' })
     })
 })
@@ -65,15 +65,11 @@ app.get('/info', (request, response) => {
       )
     })
     .catch(err => {
-      console.log(error)
+      console.log(err)
       response.status(404).send({ error: 'error occurred' })
     })
-  
-})
 
-const generateId = () => {
-  return Math.floor(Math.random() * 100000000)
-}
+})
 
 app.post('/api/persons', (request, response) => {
   const body = request.body
@@ -91,7 +87,7 @@ app.post('/api/persons', (request, response) => {
       if (foundPerson) {
         return response.status(400).json({ error: 'name must be unique' })
       }
-      
+
       const person = new Person({
         name: body.name,
         number: body.number
